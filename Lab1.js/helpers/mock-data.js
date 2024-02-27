@@ -6,7 +6,7 @@ const interns = [
     group: "A",
     average: "67",
     workPlace: "Google",
-    country: "London",
+    country: "London"
   },
   {
     id: "2",
@@ -15,7 +15,8 @@ const interns = [
     group: "A",
     average: "97",
     workPlace: "Microsost",
-    country: "Italy",
+    country: "Italy"
+  },
   {
     id: "3",
     lastName: "Williams",
@@ -23,7 +24,7 @@ const interns = [
     group: "B",
     average: "100",
     workPlace: "Google",
-    country: "Ukraine",
+    country: "Ukraine"
   },
 ];
 
