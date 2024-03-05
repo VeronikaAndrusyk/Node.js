@@ -14,7 +14,7 @@ async function create(intern) {
 
 async function find({ searchString = '', page = 1, perPage = Number.MAX_SAFE_INTEGER }) {
     searchString = searchString?.toLowerCase();
-    const searchResult = mockData.interns.filter(u => u.firstName?.toLowerCase().includes(searchString));
+    const searchResult = mockData.interns.filter(u => u.lastName?.toLowerCase().includes(searchString));
 
     return {
         items: searchResult.slice((page - 1)*perPage, page * perPage),
