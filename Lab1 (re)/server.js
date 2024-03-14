@@ -1,6 +1,7 @@
 const express = require('express');
 const { port } = require('./config');
 const internsRouter = require('./routes/interns.route');
+const bodyParser = require('body-parser');
 
 const app = express();
 
