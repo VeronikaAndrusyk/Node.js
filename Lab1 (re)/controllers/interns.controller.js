@@ -1,10 +1,16 @@
 const internService = require("../services/interns.service");
+const fs = require("fs"); // Підключення модуля fs для роботи з файловою системою
 
 async function createIntern(req, res) {
   try {
     const newIntern = await internService.create(req.body);
+    internService.addIntern(newIntern); // Додати нового інтерна до mock-даних
 
-    res.status(201).json({
+    // Зберігання нового інтерна у файл JSON
+    const internData = JSON.stringify(newIntern, null, 2);
+    fs.appendFileSync("interns.json", internData); // Запис у файл
+
+    res.status(201).json({ // Код 201 вказує на успішне створення ресурсу
       status: 201,
       message: "Intern created successfully.",
       data: newIntern,
@@ -13,8 +19,7 @@ async function createIntern(req, res) {
     console.error(err);
     res.status(500).json({
       status: 500,
-      error:
-        "Internal server error.  Please contact the administrator for assistance.",
+      error: err,
     });
   }
 }
