@@ -9,6 +9,7 @@ router.route('/')//маршрут для HTTP-запитів на коренев
 
 router.route('/:internId')
     .get(controller.getIntern)
+    .put(controller.updateIntern)
     .patch(controller.updateIntern)
     .delete(controller.deleteIntern);
 
