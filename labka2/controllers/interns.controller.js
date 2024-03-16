@@ -21,116 +21,78 @@ async function createIntern(req, res) {
 
 async function getInterns(req, res) {
   try {
-    const interns = await internService.find(req.query);
-
     res.status(200).json({
-      status: 200,
-      data: interns,
+        status: 200,
+        data: await internService.find(req.query),
     });
-  } catch (err) {
+} catch (err) {
     console.error(err);
-
-    let errorMessage = "Internal server error. Please try again later.";
-    let statusCode = 500;
-
-    // Уточнення можливих помилок
-    if (err.name === "DatabaseConnectionError") {
-      errorMessage = "Database connection error. Unable to retrieve interns.";
-      statusCode = 503; // недоступний сервер
-    } else if (err.name === "InvalidQueryError") {
-      errorMessage = "Invalid query error. Unable to retrieve interns.";
-      statusCode = 400; // некоректний запит
-    }
-
-    res.status(statusCode).json({
-      status: statusCode,
-      error: errorMessage,
+    res.status(500).json({
+        status: 500,
+        error: err,
     });
   }
-}
+};
 
 async function getIntern(req, res) {
-  try {
+ try {
     const { internId } = req.params;
     const intern = await internService.findById(internId);
 
     if (!intern) {
-      return res.status(404).json({
-        status: 404,
-        message: "Intern not found.",
-      });
+        return res.status(400).json({
+            status: 400,
+            message: 'Intern not found.',
+        });
     }
 
     res.status(200).json({
-      status: 200,
-      data: intern,
+        status: 200,
+        data: intern,
     });
-  } catch (err) {
+} catch (err) {
     console.error(err);
     res.status(500).json({
-      status: 500,
-      error: "Internal server error. Please try again later.",
+        status: 500,
+        error: err,
     });
-  }
 }
+};
 
 async function updateIntern(req, res) {
   try {
     const { internId } = req.params;
     const internData = req.body;
-    await internService.update(internId, internData);
+    await internService.findByIdAndUpdate(internId, internData);
 
     res.status(200).json({
-      status: 200,
-      message: "Intern updated successfully.",
+        status: 200,
     });
-  } catch (err) {
+} catch (err) {
     console.error(err);
-
-    let errorMessage = "Internal server error. Please try again later.";
-    let statusCode = 500;
-
-    if (err.name === "ValidationError") {
-      errorMessage = "Validation error. Please provide valid intern data.";
-      statusCode = 400; // Bad Request
-    } else if (err.name === "NotFound") {
-      errorMessage = "Intern not found. Unable to update.";
-      statusCode = 404; // Not Found
-    }
-
-    res.status(statusCode).json({
-      status: statusCode,
-      error: errorMessage,
+    res.status(500).json({
+        status: 500,
+        error: err,
     });
-  }
 }
+};
 
 async function deleteIntern(req, res) {
   try {
     const { internId } = req.params;
-    await internService.remove(internId);
+    await internService.findByIdAndDelete(internId);
 
     res.status(200).json({
-      status: 200,
-      message: "Intern deleted successfully.",
+        status: 200,
     });
-  } catch (err) {
+} catch (err) {
     console.error(err);
-
-    let errorMessage = "Internal server error. Please try again later.";
-    let statusCode = 500;
-
-    if (err.name === "NotFound") {
-      errorMessage = "Intern not found. Unable to delete.";
-      statusCode = 404; // Not Found
-    }
-
-    res.status(statusCode).json({
-      status: statusCode,
-      error: errorMessage,
+    res.status(500).json({
+        status: 500,
+        error: err,
     });
-  }
 }
+};
 
 module.exports = {
   createIntern,
