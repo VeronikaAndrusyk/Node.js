@@ -1,31 +1,23 @@
 const createError = require('http-errors');
-const ObjectId = require('mongoose').Types.ObjectId;
-const internService = require('../services/interns.service');
+const Group = require('../models/group.model');
 
-async function internByIdValidation(req, res, next) {
+async function validateGroup(req, res, next) {
     try {
-        const { internId } = req.params;
-
-        if (ObjectId.isValid(internId)) {
-            const intern = await internService.findById(internId);
-
-            if (!intern) {
-                throw createError.NotFound("Intern with such id not found");
-            }
-        } else {
-            const intern = await internService.findByLastName(internId); // Пошук за прізвищем
-
-            if (!intern) {
-                throw createError.NotFound("Intern with such surname not found");
-            }
+        const { group } = req.body;
+        const internGroup = group;
+        const existingGroups = await Group.find({}, 'name').lean().exec();
+        const groupExists = existingGroups.some(existingGroup => existingGroup.name === internGroup);
+        if (groupExists) { 
+            return next();
+        } else { 
+            throw new createError.BadRequest("Invalid group. Group must be one of the existing groups A,B,C,D,E.");
         }
-
-        next();
     } catch(err) {
-        next(err);
+        
+        return next(err);
     }
 }
 
 module.exports = {
-    internByIdValidation,
+    validateGroup,
 };
