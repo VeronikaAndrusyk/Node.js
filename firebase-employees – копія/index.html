@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="uk">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Employee Manager</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        margin: 40px;
+      }
+      form {
+        margin-bottom: 30px;
+      }
+      input {
+        margin: 5px;
+        padding: 5px;
+      }
+      button {
+        padding: 5px 10px;
+        cursor: pointer;
+      }
+      table,
+      th,
+      td {
+        border: 1px solid #aaa;
+        border-collapse: collapse;
+        padding: 8px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>📋 Працівники</h1>
+
+    <form id="addForm">
+      <input id="surname" placeholder="Прізвище" required />
+      <input id="position" placeholder="Посада" required />
+      <input id="department" placeholder="Відділ" required />
+      <input id="salary" type="number" placeholder="Зарплата" required />
+      <button type="submit">Додати</button>
+    </form>
+
+    <table id="table">
+      <thead>
+        <tr>
+          <th>Прізвище</th>
+          <th>Посада</th>
+          <th>Відділ</th>
+          <th>Зарплата</th>
+          <th>Дія</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+
+    <script>
+      const api = "http://localhost:5000/employees";
+      const form = document.getElementById("addForm");
+      const tbody = document.querySelector("#table tbody");
+
+      async function loadEmployees() {
+        const res = await fetch(api);
+        const data = await res.json();
+        tbody.innerHTML = data
+          .map(
+            (e) => `
+        <tr>
+          <td>${e.surname}</td>
+          <td>${e.position}</td>
+          <td>${e.department}</td>
+          <td>${e.salary}</td>
+          <td><button onclick="del('${e.id}')">❌</button></td>
+        </tr>`
+          )
+          .join("");
+      }
+
+    
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const newEmp = {
+          surname: surname.value,
+          position: position.value,
+          department: department.value,
+          salary: Number(salary.value),
+        };
+        await fetch(api, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(newEmp),
+        });
+        form.reset();
+        loadEmployees();
+      });
+
+      async function del(id) {
+        await fetch(`${api}/${id}`, { method: "DELETE" });
+        loadEmployees();
+      }
+
+      loadEmployees();
+    </script>
+  </body>
+</html>
